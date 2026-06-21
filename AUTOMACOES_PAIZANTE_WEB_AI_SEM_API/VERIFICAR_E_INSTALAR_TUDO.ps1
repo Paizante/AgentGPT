@@ -21,6 +21,26 @@ Log "OK - Hub encontrado em: $hub"
 $scripts = Join-Path $hub "05_SCRIPTS_PYTHON"
 $painel  = Join-Path $hub "01_PAINEL_LOCAL"
 
+# 1.1) Aplicar automaticamente pacotes de atualizacao (ZIP) encontrados em Downloads
+Log ""
+Log "--- [0/8] Pacotes de atualizacao em Downloads ---"
+$pastaDownloads = Join-Path $env:USERPROFILE "Downloads"
+$zipsAtualizacao = Get-ChildItem -Path $pastaDownloads -Filter "ATUALIZACAO_*.zip" -ErrorAction SilentlyContinue |
+    Sort-Object LastWriteTime -Descending
+if ($zipsAtualizacao) {
+    foreach ($zip in $zipsAtualizacao) {
+        Log "Aplicando pacote de atualizacao: $($zip.Name)"
+        try {
+            Expand-Archive -Path $zip.FullName -DestinationPath (Join-Path $env:USERPROFILE "Documents") -Force
+            Log "OK - Pacote $($zip.Name) extraido por cima da pasta do projeto."
+        } catch {
+            Log "FALHA ao extrair $($zip.Name): $_"
+        }
+    }
+} else {
+    Log "Nenhum pacote de atualizacao (ATUALIZACAO_*.zip) encontrado em Downloads. Pulei esta etapa."
+}
+
 # 2) Verificar Python (instala se ausente ou corrompido)
 Log ""
 Log "--- [1/8] Python ---"
@@ -135,15 +155,44 @@ if ($cmdOllama -and $ollamaRodando) {
         $saidaPull = (& ollama pull llama3.1:8b) 2>&1 | Out-String
         Log $saidaPull
         if ($saidaPull -match "i/o timeout|dial tcp|connection refused") {
-            Log "FALHA DE REDE ao baixar o modelo. Testando conectividade com o repositorio de modelos..."
-            $teste = Test-NetConnection registry.ollama.ai -Port 443 -WarningAction SilentlyContinue
-            if (-not $teste.TcpTestSucceeded) {
-                Log "DIAGNOSTICO: a porta 443 para registry.ollama.ai esta BLOQUEADA nesta rede/computador."
-                Log "Causas mais comuns: firewall do Windows, antivirus com modulo de rede, ou bloqueio do roteador/provedor."
-                Log "Sugestao: teste em outra rede (ex.: compartilhar internet do celular) para confirmar se e bloqueio local ou do provedor."
+            Log "FALHA DE REDE ao baixar o modelo. Rodando diagnostico de rede completo..."
+
+            Log ""
+            Log "  > Teste de conectividade HTTPS (porta 443) em varios destinos:"
+            $destinosTeste = @("registry.ollama.ai", "github.com", "www.google.com")
+            $blocked = @{}
+            foreach ($destino in $destinosTeste) {
+                $r = Test-NetConnection $destino -Port 443 -WarningAction SilentlyContinue
+                $blocked[$destino] = -not $r.TcpTestSucceeded
+                Log "    - $destino : $(if ($r.TcpTestSucceeded) { 'OK' } else { 'BLOQUEADO' })"
+            }
+
+            Log ""
+            Log "  > Configuracao de proxy do Windows:"
+            $proxy = (netsh winhttp show proxy) 2>&1 | Out-String
+            Log "    $proxy".Trim()
+
+            Log ""
+            Log "  > Antivirus detectado no sistema:"
+            try {
+                $avs = Get-CimInstance -Namespace "root/SecurityCenter2" -ClassName AntiVirusProduct -ErrorAction Stop
+                if ($avs) { $avs | ForEach-Object { Log "    - $($_.displayName)" } }
+                else { Log "    Nenhum antivirus de terceiros detectado (so o Windows Defender padrao)." }
+            } catch {
+                Log "    Nao foi possivel consultar antivirus instalados nesta sessao."
+            }
+
+            Log ""
+            if ($blocked["github.com"] -or $blocked["www.google.com"]) {
+                Log "DIAGNOSTICO: o bloqueio nao e especifico do Ollama - outros sites HTTPS tambem falharam."
+                Log "Isso indica problema geral de rede/firewall/antivirus, nao algo so do registry.ollama.ai."
+            } elseif ($blocked["registry.ollama.ai"]) {
+                Log "DIAGNOSTICO: apenas registry.ollama.ai esta bloqueado (github.com e google.com funcionaram)."
+                Log "Isso indica um bloqueio especifico por dominio/IP - tipico de antivirus com filtro web, controle parental ou firewall corporativo com lista de bloqueio."
             } else {
                 Log "DIAGNOSTICO: a porta 443 respondeu neste teste - pode ter sido uma falha temporaria. Tente rodar este script de novo."
             }
+            Log "Para confirmar 100% se e bloqueio do roteador/provedor (e nao do Windows), conecte o notebook no Wi-Fi/hotspot do celular e rode este script de novo."
         }
     } else {
         Log "OK - llama3.1:8b ja instalado."
