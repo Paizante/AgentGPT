@@ -23,6 +23,25 @@ $env:USERPROFILE\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API
 Todos os scripts detectam esse caminho automaticamente via `$env:USERPROFILE`
 e nunca assumem um nome fixo de usuario.
 
+## Verificar e instalar tudo de uma vez
+
+Na raiz desta central ha um script unico,
+`VERIFICAR_E_INSTALAR_TUDO.ps1`, que confere e corrige o ambiente
+inteiro: verifica/instala Python, cria e atualiza o ambiente virtual e
+as dependencias do painel, roda a auditoria automatizada (pytest),
+verifica/instala Google Chrome e Ollama (IA local opcional), baixa o
+modelo de IA local recomendado e recria o atalho da Area de Trabalho. No
+final grava um relatorio em `12_RELATORIOS`. Para rodar (PowerShell como
+Administrador, recomendado para as instalacoes via winget):
+
+```powershell
+cd "$env:USERPROFILE\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API"
+.\VERIFICAR_E_INSTALAR_TUDO.ps1
+```
+
+Nao apaga nem sobrescreve nada do seu trabalho - so confere, instala o
+que faltar e relata.
+
 ## Estrutura de pastas
 
 - `00_LEIA_ME` - documentacao (este conjunto de arquivos).
