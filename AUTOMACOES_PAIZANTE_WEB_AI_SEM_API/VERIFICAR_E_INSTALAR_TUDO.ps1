@@ -188,7 +188,34 @@ if ($cmdOllama -and $ollamaRodando) {
                 Log "Isso indica problema geral de rede/firewall/antivirus, nao algo so do registry.ollama.ai."
             } elseif ($blocked["registry.ollama.ai"]) {
                 Log "DIAGNOSTICO: apenas registry.ollama.ai esta bloqueado (github.com e google.com funcionaram)."
-                Log "Isso indica um bloqueio especifico por dominio/IP - tipico de antivirus com filtro web, controle parental ou firewall corporativo com lista de bloqueio."
+                Log "Isso indica um bloqueio especifico por dominio - tipico da Protecao de Rede do Windows Defender, antivirus com filtro web, ou controle parental."
+
+                Log ""
+                Log "  > Verificando Protecao de Rede do Windows Defender (causa mais comum nesse padrao)..."
+                try {
+                    $npAtual = (Get-MpPreference -ErrorAction Stop).EnableNetworkProtection
+                    Log "    Estado atual: $npAtual (0=Desativado, 1=Ativado, 2=Modo Auditoria)"
+                    if ($npAtual -ne 0) {
+                        Log "    Desativando temporariamente para testar e baixar o modelo..."
+                        Set-MpPreference -EnableNetworkProtection Disabled
+                        Start-Sleep -Seconds 2
+                        $teste2 = Test-NetConnection registry.ollama.ai -Port 443 -WarningAction SilentlyContinue
+                        if ($teste2.TcpTestSucceeded) {
+                            Log "    CONFIRMADO: o bloqueio era da Protecao de Rede do Windows Defender."
+                            Log "    Baixando o modelo agora..."
+                            $saidaPull2 = (& ollama pull llama3.1:8b) 2>&1 | Out-String
+                            Log $saidaPull2
+                        } else {
+                            Log "    Mesmo desativada, o bloqueio persiste - nao e a Protecao de Rede do Defender."
+                        }
+                        Log "    Reativando a Protecao de Rede do Windows Defender (recomendado manter ativada por seguranca)..."
+                        Set-MpPreference -EnableNetworkProtection Enabled
+                    } else {
+                        Log "    Protecao de Rede ja estava desativada - nao e a causa do bloqueio."
+                    }
+                } catch {
+                    Log "    Nao foi possivel consultar/alterar a Protecao de Rede do Defender nesta sessao: $_"
+                }
             } else {
                 Log "DIAGNOSTICO: a porta 443 respondeu neste teste - pode ter sido uma falha temporaria. Tente rodar este script de novo."
             }
