@@ -1,4 +1,5 @@
 $ErrorActionPreference = "Continue"
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force -ErrorAction SilentlyContinue
 $relatorio = New-Object System.Collections.Generic.List[string]
 function Log($msg) { Write-Host $msg; $relatorio.Add([string]$msg) }
 
@@ -22,7 +23,7 @@ $painel  = Join-Path $hub "01_PAINEL_LOCAL"
 
 # 2) Verificar Python (instala se ausente ou corrompido)
 Log ""
-Log "--- [1/7] Python ---"
+Log "--- [1/8] Python ---"
 $pythonOk = $false
 try {
     $verPython = (python --version) 2>&1
@@ -47,7 +48,7 @@ if (-not $pythonOk) {
 
 # 3) Ambiente virtual e dependencias do painel
 Log ""
-Log "--- [2/7] Ambiente Python do painel (.venv) ---"
+Log "--- [2/8] Ambiente Python do painel (.venv) ---"
 Set-Location $scripts
 if (-not (Test-Path "$scripts\.venv")) {
     Log "Criando ambiente virtual..."
@@ -59,7 +60,7 @@ Log "OK - Dependencias instaladas/atualizadas."
 
 # 4) Auditoria: rodar os testes automatizados
 Log ""
-Log "--- [3/7] Auditoria automatizada (pytest) ---"
+Log "--- [3/8] Auditoria automatizada (pytest) ---"
 $saidaTestes = & "$scripts\.venv\Scripts\python.exe" -m pytest "$scripts\tests" -v 2>&1
 $saidaTestes | ForEach-Object { Log $_ }
 if ($LASTEXITCODE -eq 0) {
@@ -68,9 +69,28 @@ if ($LASTEXITCODE -eq 0) {
     Log "ATENCAO - Pelo menos um teste falhou. Revise as linhas acima."
 }
 
+# 4.1) Verificar se a atualizacao do Chat com IA local (anexos/Ollama) esta presente
+Log ""
+Log "--- [4/8] Atualizacao do Chat com IA local ---"
+$arquivosChat = @(
+    (Join-Path $scripts "src\ollama_client.py"),
+    (Join-Path $scripts "src\anexo_manager.py"),
+    (Join-Path $scripts "src\chat_manager.py"),
+    (Join-Path $painel "templates\chat.html")
+)
+$faltandoChat = $arquivosChat | Where-Object { -not (Test-Path $_) }
+if ($faltandoChat.Count -eq 0) {
+    Log "OK - Funcionalidade de Chat com IA local (anexos, imagens) esta instalada."
+} else {
+    Log "ATENCAO - A atualizacao do Chat com IA local NAO esta instalada nesta pasta."
+    Log "Arquivos faltando:"
+    $faltandoChat | ForEach-Object { Log "  - $_" }
+    Log "Para instalar, extraia o pacote de atualizacao (ZIP do chat) por cima desta pasta do projeto e rode este script de novo."
+}
+
 # 5) Google Chrome
 Log ""
-Log "--- [4/7] Google Chrome ---"
+Log "--- [5/8] Google Chrome ---"
 $chromeCaminhos = @(
     "C:\Program Files\Google\Chrome\Application\chrome.exe",
     "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
@@ -84,7 +104,7 @@ if ($chromeCaminhos | Where-Object { Test-Path $_ }) {
 
 # 6) Ollama (IA local gratuita, opcional)
 Log ""
-Log "--- [5/7] Ollama (IA local opcional) ---"
+Log "--- [6/8] Ollama (IA local opcional) ---"
 $ollamaRodando = $false
 try {
     Invoke-RestMethod -Uri "http://localhost:11434/api/tags" -TimeoutSec 3 | Out-Null
@@ -106,13 +126,25 @@ try {
 
 # 7) Modelos recomendados (se Ollama ja disponivel neste terminal)
 Log ""
-Log "--- [6/7] Modelos de IA local ---"
+Log "--- [7/8] Modelos de IA local ---"
 $cmdOllama = Get-Command ollama -ErrorAction SilentlyContinue
 if ($cmdOllama -and $ollamaRodando) {
     $listaModelos = (& ollama list) 2>&1 | Out-String
     if ($listaModelos -notmatch "llama3\.1:8b") {
         Log "Baixando modelo de texto llama3.1:8b (pode levar alguns minutos)..."
-        ollama pull llama3.1:8b
+        $saidaPull = (& ollama pull llama3.1:8b) 2>&1 | Out-String
+        Log $saidaPull
+        if ($saidaPull -match "i/o timeout|dial tcp|connection refused") {
+            Log "FALHA DE REDE ao baixar o modelo. Testando conectividade com o repositorio de modelos..."
+            $teste = Test-NetConnection registry.ollama.ai -Port 443 -WarningAction SilentlyContinue
+            if (-not $teste.TcpTestSucceeded) {
+                Log "DIAGNOSTICO: a porta 443 para registry.ollama.ai esta BLOQUEADA nesta rede/computador."
+                Log "Causas mais comuns: firewall do Windows, antivirus com modulo de rede, ou bloqueio do roteador/provedor."
+                Log "Sugestao: teste em outra rede (ex.: compartilhar internet do celular) para confirmar se e bloqueio local ou do provedor."
+            } else {
+                Log "DIAGNOSTICO: a porta 443 respondeu neste teste - pode ter sido uma falha temporaria. Tente rodar este script de novo."
+            }
+        }
     } else {
         Log "OK - llama3.1:8b ja instalado."
     }
@@ -122,10 +154,11 @@ if ($cmdOllama -and $ollamaRodando) {
 
 # 8) Atalho na Area de Trabalho
 Log ""
-Log "--- [7/7] Atalho na Area de Trabalho ---"
+Log "--- [8/8] Atalho na Area de Trabalho ---"
 $scriptAtalho = Join-Path $painel "criar_atalho_area_trabalho.ps1"
 if (Test-Path $scriptAtalho) {
-    & $scriptAtalho
+    $saidaAtalho = (powershell -NoProfile -ExecutionPolicy Bypass -File $scriptAtalho) 2>&1 | Out-String
+    Log $saidaAtalho
 } else {
     Log "Script de atalho nao encontrado (pulei esta etapa)."
 }
