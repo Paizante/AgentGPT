@@ -61,14 +61,14 @@ def home(request: Request):
     trabalhos = job_manager.listar_trabalhos()
     clientes = organizador_clientes.listar_clientes()
     return templates.TemplateResponse(
-        "index.html", _ctx(request, trabalhos=trabalhos, clientes=clientes)
+        request, "index.html", _ctx(request, trabalhos=trabalhos, clientes=clientes)
     )
 
 
 @app.get("/novo")
 def novo_trabalho_form(request: Request):
     clientes = organizador_clientes.listar_clientes()
-    return templates.TemplateResponse("novo_trabalho.html", _ctx(request, clientes=clientes, ias=IAS))
+    return templates.TemplateResponse(request, "novo_trabalho.html", _ctx(request, clientes=clientes, ias=IAS))
 
 
 @app.post("/novo")
@@ -102,6 +102,7 @@ def ver_trabalho(request: Request, job_id: str):
     checklist = job_manager.ler_arquivo_trabalho(job_id, "checklist.md")
     log = job_manager.ler_arquivo_trabalho(job_id, "log.md")
     return templates.TemplateResponse(
+        request,
         "trabalho.html",
         _ctx(
             request,
@@ -203,7 +204,7 @@ def backup_trabalho(job_id: str):
 @app.get("/clientes")
 def clientes_listar(request: Request):
     clientes = organizador_clientes.listar_clientes()
-    return templates.TemplateResponse("clientes.html", _ctx(request, clientes=clientes))
+    return templates.TemplateResponse(request, "clientes.html", _ctx(request, clientes=clientes))
 
 
 @app.post("/clientes/novo")

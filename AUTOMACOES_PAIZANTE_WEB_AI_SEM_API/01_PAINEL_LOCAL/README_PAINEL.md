@@ -46,6 +46,15 @@ trabalho, clientes, prompts, comparacao, consolidacao etc.).
 Voce tambem pode dar dois cliques direto em
 `01_PAINEL_LOCAL\ABRIR_PAINEL_PAIZANTE.bat` sem criar o atalho.
 
+### Opcao 1b - arquivo unico para a Area de Trabalho (sem instalar atalho)
+
+Se preferir um unico arquivo `.bat` solto direto na Area de Trabalho (sem
+depender de `criar_atalho_area_trabalho.ps1` nem de ficar dentro de
+`01_PAINEL_LOCAL`), copie `01_PAINEL_LOCAL\Painel_Paizante_Desktop.bat`
+para a Area de Trabalho. Ele localiza o hub sozinho em
+`%USERPROFILE%\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API` e funciona
+mesmo fora da pasta original.
+
 ### Opcao 2 - linha de comando
 
 ```powershell
