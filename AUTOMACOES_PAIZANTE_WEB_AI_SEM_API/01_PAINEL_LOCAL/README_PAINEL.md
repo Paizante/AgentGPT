@@ -15,6 +15,9 @@ exclusivo em `127.0.0.1` (nao acessivel pela rede/internet).
   protocolo.
 - Abrir a pasta do trabalho/cliente no Explorador de Arquivos.
 - Gerar backup do trabalho.
+- Chat estilo ChatGPT com uma IA local gratuita (Ollama), por trabalho,
+  com upload de documentos/fotos/imagens - a IA sempre pergunta o que e o
+  anexo antes de analisar (ver `09_OLLAMA_LOCAL/README_OLLAMA.md`).
 
 ## Tipos de tarefa suportados
 
@@ -76,4 +79,5 @@ Depois abra http://localhost:8000 (ou use
 O painel reaproveita toda a logica de negocio dos modulos em
 `05_SCRIPTS_PYTHON/src` (job_manager, prompt_builder, response_collector,
 response_comparer, response_consolidator, organizador_clientes,
-checklist_protocolo, clipboard_tools, browser_launcher, file_utils).
+checklist_protocolo, clipboard_tools, browser_launcher, file_utils,
+chat_manager, anexo_manager, ollama_client).

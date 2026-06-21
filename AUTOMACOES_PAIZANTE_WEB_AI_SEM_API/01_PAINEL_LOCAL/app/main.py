@@ -18,18 +18,20 @@ SRC_DIR = BASE_DIR / "05_SCRIPTS_PYTHON"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from src import (  # noqa: E402
     browser_launcher,
+    chat_manager,
     checklist_protocolo,
     clipboard_tools,
     config,
     file_utils,
     job_manager,
+    ollama_client,
     organizador_clientes,
     prompt_builder,
     response_collector,
@@ -199,6 +201,43 @@ def backup_trabalho(job_id: str):
     job_manager.fazer_backup_trabalho(job_id)
     job_manager.registrar_log(job_id, "Backup do trabalho gerado em 10_BACKUPS.")
     return RedirectResponse(url=f"/trabalho/{job_id}", status_code=303)
+
+
+@app.get("/trabalho/{job_id}/chat")
+def chat_ver(request: Request, job_id: str):
+    trabalho = job_manager.carregar_trabalho(job_id)
+    mensagens = chat_manager.carregar_chat(job_id)
+    ollama_ok = ollama_client.esta_disponivel()
+    modelos = ollama_client.listar_modelos() if ollama_ok else []
+    return templates.TemplateResponse(
+        request,
+        "chat.html",
+        _ctx(
+            request,
+            trabalho=trabalho,
+            job_id=job_id,
+            mensagens=mensagens,
+            ollama_ok=ollama_ok,
+            modelos=modelos,
+        ),
+    )
+
+
+@app.post("/trabalho/{job_id}/chat/enviar")
+async def chat_enviar(job_id: str, mensagem: str = Form(""), anexos: list[UploadFile] = File(default=[])):
+    arquivos: list[tuple[str, bytes]] = []
+    for anexo in anexos:
+        if anexo and anexo.filename:
+            arquivos.append((anexo.filename, await anexo.read()))
+    chat_manager.enviar_mensagem(job_id, mensagem, arquivos)
+    return RedirectResponse(url=f"/trabalho/{job_id}/chat", status_code=303)
+
+
+@app.post("/trabalho/{job_id}/chat/limpar")
+def chat_limpar(job_id: str):
+    chat_manager.limpar_chat(job_id)
+    job_manager.registrar_log(job_id, "Historico de chat com a IA local arquivado (novo chat iniciado).")
+    return RedirectResponse(url=f"/trabalho/{job_id}/chat", status_code=303)
 
 
 @app.get("/clientes")

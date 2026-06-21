@@ -13,3 +13,20 @@ body { font-family: Segoe UI, Arial, sans-serif; margin: 0; background: #f4f4f4;
 .aviso { color: #a33; font-weight: bold; }
 textarea, input, select { width: 100%; box-sizing: border-box; padding: 6px; margin-bottom: 6px; }
 .checkboxes label { margin-right: 16px; }
+
+.botao-link { display: inline-block; background: #1c2b4a; color: white; border: none; padding: 8px 14px; border-radius: 4px; margin: 4px 4px 4px 0; text-decoration: none; }
+.botao-link:hover { background: #324a78; }
+.botao-secundario { background: #777; }
+.botao-secundario:hover { background: #999; }
+
+.chat-caixa { background: white; border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.chat-mensagens { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; padding: 6px; }
+.chat-vazio { color: #777; font-style: italic; }
+.chat-bolha { max-width: 80%; padding: 10px 12px; border-radius: 10px; }
+.chat-user { align-self: flex-end; background: #dce6fb; }
+.chat-assistant { align-self: flex-start; background: #f0f0f0; }
+.chat-autor { font-size: 0.75em; color: #555; margin-bottom: 4px; }
+.chat-texto { white-space: pre-wrap; word-wrap: break-word; }
+.chat-anexos { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
+.chat-anexo-tag { background: #1c2b4a; color: white; border-radius: 4px; padding: 2px 8px; font-size: 0.75em; }
+.chat-formulario { display: flex; flex-direction: column; gap: 8px; }
