@@ -27,6 +27,27 @@ comparacao entre IAs (ver `src/config.py` -> `TIPOS_TAREFA`).
 
 ## Como rodar
 
+### Opcao 1 - atalho na Area de Trabalho (recomendado para o dia a dia)
+
+Rode uma unica vez, para criar o atalho:
+
+```powershell
+cd "$env:USERPROFILE\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API\01_PAINEL_LOCAL"
+.\criar_atalho_area_trabalho.ps1
+```
+
+Isso cria o atalho **"Painel Paizante"** na sua Area de Trabalho do
+Windows. A partir de agora, basta dar dois cliques nele: o servidor
+sobe (criando a venv e instalando dependencias na primeira vez, se
+necessario) e o navegador abre automaticamente em
+`http://localhost:8000`, com acesso a todas as opcoes do painel (novo
+trabalho, clientes, prompts, comparacao, consolidacao etc.).
+
+Voce tambem pode dar dois cliques direto em
+`01_PAINEL_LOCAL\ABRIR_PAINEL_PAIZANTE.bat` sem criar o atalho.
+
+### Opcao 2 - linha de comando
+
 ```powershell
 cd "$env:USERPROFILE\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API\01_PAINEL_LOCAL"
 .\run_painel.ps1

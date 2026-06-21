@@ -36,6 +36,21 @@
 
 ## Abrindo o painel
 
+Mais simples: crie uma vez o atalho de Area de Trabalho e depois so de
+dois cliques nele:
+
+```powershell
+cd "$env:USERPROFILE\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API\01_PAINEL_LOCAL"
+.\criar_atalho_area_trabalho.ps1
+```
+
+Isso cria o atalho **"Painel Paizante"** na Area de Trabalho do
+Windows. Ao clicar nele, o servidor sobe (criando a venv e instalando
+dependencias na primeira vez) e o navegador abre automaticamente em
+`http://localhost:8000`, com acesso a todas as opcoes do painel.
+
+Alternativas:
+
 ```powershell
 cd "$env:USERPROFILE\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API\05_SCRIPTS_PYTHON"
 python -m venv .venv
@@ -44,7 +59,8 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Ou diretamente: `01_PAINEL_LOCAL\run_painel.ps1`.
+Ou diretamente: `01_PAINEL_LOCAL\run_painel.ps1` /
+`01_PAINEL_LOCAL\ABRIR_PAINEL_PAIZANTE.bat`.
 
 ## Abrindo as IAs
 

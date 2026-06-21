@@ -34,6 +34,20 @@ pytest tests\ -v
 
 ## Abrir o painel local (FastAPI, recomendado para o dia a dia)
 
+Atalho na Area de Trabalho (criar uma unica vez):
+
+```powershell
+cd "$env:USERPROFILE\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API\01_PAINEL_LOCAL"
+.\criar_atalho_area_trabalho.ps1
+```
+
+Depois disso, basta dar dois cliques no atalho **"Painel Paizante"**
+na Area de Trabalho (ou direto em `ABRIR_PAINEL_PAIZANTE.bat`) sempre
+que quiser usar o hub - o navegador abre automaticamente em
+`http://localhost:8000` com todas as opcoes do painel.
+
+Ou via linha de comando:
+
 ```powershell
 cd "$env:USERPROFILE\Documents\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API\01_PAINEL_LOCAL"
 .\run_painel.ps1
