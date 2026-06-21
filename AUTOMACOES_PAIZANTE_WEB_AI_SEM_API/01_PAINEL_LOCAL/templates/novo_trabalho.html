@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Novo Trabalho{% endblock %}
+{% block conteudo %}
+<h2>Novo Trabalho</h2>
+<form method="post" action="/novo" class="formulario">
+    <label>Tipo de tarefa</label>
+    <select name="tipo_tarefa" required>
+        {% for chave, rotulo in tipos_tarefa.items() %}
+        <option value="{{ chave }}">{{ rotulo }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Cliente</label>
+    <select name="cliente" required>
+        <option value="__novo__">-- Novo cliente --</option>
+        {% for c in clientes %}
+        <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+    </select>
+    <input type="text" name="cliente_novo" placeholder="Nome do novo cliente (se selecionado acima)">
+
+    <label>Resumo do caso</label>
+    <textarea name="resumo" rows="6" placeholder="Resuma os fatos relevantes. Evite dados sensiveis desnecessarios (ver LGPD_SIGILO_PROFISSIONAL.md)."></textarea>
+
+    <label>IAs a usar</label>
+    <div class="checkboxes">
+        {% for ia in ias %}
+        <label><input type="checkbox" name="ia_{{ ia }}"> {{ ia | capitalize }}</label>
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="botao">Criar trabalho</button>
+</form>
+{% endblock %}

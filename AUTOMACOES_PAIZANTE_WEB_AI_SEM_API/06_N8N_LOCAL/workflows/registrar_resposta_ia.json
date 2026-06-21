@@ -1,0 +1,36 @@
+{
+  "name": "Paizante - Registrar Resposta de IA (local)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "registrar-resposta-ia",
+        "options": {}
+      },
+      "id": "webhook-local",
+      "name": "Webhook Local (127.0.0.1)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { recebido_em: new Date().toISOString(), job_id: $json.job_id || '', ia: $json.ia || '', tamanho_resposta: (($json.resposta || '').length) } }];"
+      },
+      "id": "registrar-function",
+      "name": "Registrar metadados (sem enviar nada)",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [480, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Local (127.0.0.1)": {
+      "main": [[{ "node": "Registrar metadados (sem enviar nada)", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "meta": {
+    "instructions": "Webhook apenas local (nao exponha esta porta para a internet). Use para registrar que uma resposta de IA ja colada foi recebida; nao busca nem envia nada automaticamente para ChatGPT/Claude/Gemini."
+  }
+}

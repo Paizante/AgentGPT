@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+jinja2
+python-multipart
+pypdf
+pymupdf
+python-docx
+pandas
+openpyxl
+rich
+typer
+pydantic
+python-dotenv
+pyyaml
+pyperclip
+watchdog
+pytest

@@ -1,0 +1,11 @@
+Coloque aqui o arquivo de papel timbrado do escritorio (logo, cabecalho e
+rodape padrao) em formato .docx ou .png/.jpg, para ser usado como base
+visual das pecas geradas.
+
+Sugestao de conteudo do cabecalho:
+- Nome: Dr. Gustavo Paizante
+- OAB/MG 180.822
+- Endereco/contato do escritorio (preencher)
+
+Sugestao de rodape:
+- Assinatura padrao: "Dr. Gustavo Paizante - OAB/MG 180.822"

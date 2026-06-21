@@ -1,0 +1,38 @@
+{
+  "name": "Paizante - Chamada Ollama Local",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-manual",
+      "name": "Disparo Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11434/api/generate",
+        "options": {},
+        "bodyParametersJson": "{ \"model\": \"llama3.1:8b\", \"prompt\": \"Resuma em 3 linhas: {{$json.texto}}\", \"stream\": false }",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "id": "chamada-ollama",
+      "name": "POST para Ollama Local",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 300]
+    }
+  ],
+  "connections": {
+    "Disparo Manual": {
+      "main": [[{ "node": "POST para Ollama Local", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "meta": {
+    "instructions": "Chama o Ollama local (sem custo, sem API paga) em http://localhost:11434. Ajuste o modelo conforme o que estiver instalado (ollama pull llama3.1:8b)."
+  }
+}

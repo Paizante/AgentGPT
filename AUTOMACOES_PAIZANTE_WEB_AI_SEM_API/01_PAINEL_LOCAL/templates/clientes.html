@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block conteudo %}
+<h2>Clientes</h2>
+
+<form method="post" action="/clientes/novo" class="formulario">
+    <label>Nome do novo cliente</label>
+    <input type="text" name="nome" required>
+    <button class="botao" type="submit">Criar pasta do cliente</button>
+</form>
+
+<h3>Clientes existentes</h3>
+<ul>
+    {% for c in clientes %}
+    <li>
+        {{ c }}
+        <form method="post" action="/clientes/{{ c }}/abrir_pasta" style="display:inline">
+            <button class="botao" type="submit">Abrir pasta</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Chat IA local - {{ job_id }}{% endblock %}
+{% block conteudo %}
+<h2>Chat com IA local - {{ trabalho.cliente }}</h2>
+<p>
+    <a href="/trabalho/{{ job_id }}">&larr; Voltar para o trabalho {{ job_id }}</a>
+</p>
+
+{% if not ollama_ok %}
+<p class="aviso">
+    O Ollama local nao esta rodando em http://localhost:11434. Instale e
+    inicie o Ollama (gratuito, 100% local, ver pasta 09_OLLAMA_LOCAL) para
+    usar o chat. Sem ele, o chat fica indisponivel, mas todo o resto do
+    painel continua funcionando normalmente.
+</p>
+{% elif not modelos %}
+<p class="aviso">
+    O Ollama esta rodando, mas nenhum modelo esta instalado ainda. Rode no
+    PowerShell: <code>ollama pull llama3.1:8b</code> (texto) e/ou
+    <code>ollama pull llama3.2-vision:11b</code> (para analisar fotos e
+    imagens). Veja 09_OLLAMA_LOCAL/modelos_recomendados.md.
+</p>
+{% else %}
+<p class="aviso">
+    IA local gratuita (Ollama) - 100% offline, nada e enviado para fora do
+    seu computador. Nao substitui o ChatGPT/Claude/Gemini nem a revisao
+    humana obrigatoria. Modelos instalados: {{ modelos | join(", ") }}.
+</p>
+{% endif %}
+
+<section class="chat-caixa">
+    <div class="chat-mensagens">
+        {% if not mensagens %}
+        <p class="chat-vazio">Nenhuma mensagem ainda. Anexe um documento, foto ou imagem e pergunte algo, ou apenas escreva sua pergunta abaixo.</p>
+        {% endif %}
+        {% for m in mensagens %}
+        <div class="chat-bolha chat-{{ m.role }}">
+            <div class="chat-autor">{{ "Voce" if m.role == "user" else "IA local" }} - {{ m.hora }}</div>
+            <div class="chat-texto">{{ m.texto }}</div>
+            {% if m.anexos %}
+            <div class="chat-anexos">
+                {% for nome in m.anexos %}
+                <span class="chat-anexo-tag">{{ nome }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <form method="post" action="/trabalho/{{ job_id }}/chat/enviar" enctype="multipart/form-data" class="chat-formulario">
+        <textarea name="mensagem" rows="3" placeholder="Escreva sua mensagem para a IA local..."></textarea>
+        <input type="file" name="anexos" multiple>
+        <button class="botao" type="submit">Enviar</button>
+    </form>
+    <form method="post" action="/trabalho/{{ job_id }}/chat/limpar" style="display:inline">
+        <button class="botao botao-secundario" type="submit">Iniciar novo chat (arquiva o atual)</button>
+    </form>
+</section>
+{% endblock %}

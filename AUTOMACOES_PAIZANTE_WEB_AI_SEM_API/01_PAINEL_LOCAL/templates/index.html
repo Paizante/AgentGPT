@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Trabalhos - Painel Local{% endblock %}
+{% block conteudo %}
+<h2>Trabalhos</h2>
+<p><a class="botao" href="/novo">+ Criar novo trabalho</a></p>
+
+{% if not trabalhos %}
+<p>Nenhum trabalho criado ainda.</p>
+{% else %}
+<table class="tabela">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Cliente</th>
+            <th>Criado em</th>
+            <th>IAs</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in trabalhos %}
+        <tr>
+            <td>{{ t.job_id }}</td>
+            <td>{{ t.tipo_tarefa }}</td>
+            <td>{{ t.cliente }}</td>
+            <td>{{ t.criado_em }}</td>
+            <td>{{ t.ias|join(", ") }}</td>
+            <td><a href="/trabalho/{{ t.job_id }}">Abrir</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<h3>Clientes cadastrados</h3>
+<ul>
+    {% for c in clientes %}
+    <li>{{ c }}</li>
+    {% endfor %}
+</ul>
+<p><a href="/clientes">Gerenciar clientes</a></p>
+
+<p><small>Pasta base detectada: {{ base_dir }}</small></p>
+{% endblock %}
