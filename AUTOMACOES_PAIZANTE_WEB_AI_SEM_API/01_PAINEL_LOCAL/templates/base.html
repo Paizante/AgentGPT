@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Painel Local - Paizante{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="topo">
+        <h1><a href="/">Painel Local - Automacoes Paizante Web AI</a></h1>
+        <nav>
+            <a href="/">Trabalhos</a>
+            <a href="/novo">Novo Trabalho</a>
+            <a href="/clientes">Clientes</a>
+        </nav>
+    </header>
+    <main class="conteudo">
+        {% block conteudo %}{% endblock %}
+    </main>
+    <footer class="rodape">
+        <small>100% local - sem API paga - {{ assinatura }}</small>
+    </footer>
+    <script src="/static/clipboard.js"></script>
+</body>
+</html>

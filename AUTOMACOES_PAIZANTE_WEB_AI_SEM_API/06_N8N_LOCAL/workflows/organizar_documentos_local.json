@@ -1,0 +1,37 @@
+{
+  "name": "Paizante - Organizar Documentos (local)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "%USERPROFILE%\\Documents\\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API\\04_DOCUMENTOS\\entrada\\documentos_para_organizar",
+        "triggerOn": "folder",
+        "events": ["add"]
+      },
+      "id": "watch-pasta",
+      "name": "Observar pasta de entrada",
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { arquivo: $json.path, recebido_em: new Date().toISOString(), nota: 'Revisar manualmente e classificar com organizador_clientes.py - originais nunca sao movidos automaticamente.' } }];"
+      },
+      "id": "notificar-novo-arquivo",
+      "name": "Notificar novo arquivo",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [480, 300]
+    }
+  ],
+  "connections": {
+    "Observar pasta de entrada": {
+      "main": [[{ "node": "Notificar novo arquivo", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "meta": {
+    "instructions": "Apenas notifica quando um novo arquivo chega na pasta de entrada. A classificacao/copia para a pasta do cliente continua exigindo confirmacao humana (painel ou run.py)."
+  }
+}

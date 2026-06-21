@@ -1,0 +1,6 @@
+{
+  "_comentario": "Exemplo de corpo de requisicao para POST http://localhost:11434/api/generate (Ollama local, gratuito, sem API paga).",
+  "model": "llama3.1:8b",
+  "prompt": "Resuma em 3 linhas o seguinte texto: <cole aqui um texto curto e nao sensivel>",
+  "stream": false
+}

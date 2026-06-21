@@ -1,0 +1,33 @@
+{
+  "name": "Paizante - Checklist Documental (local)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-manual",
+      "name": "Disparo Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { mensagem: 'Confirme: documentos presentes, nomes padronizados, prazos verificados, peca revisada e assinada.' } }];"
+      },
+      "id": "checklist-function",
+      "name": "Montar Checklist",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [480, 300]
+    }
+  ],
+  "connections": {
+    "Disparo Manual": {
+      "main": [[{ "node": "Montar Checklist", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "meta": {
+    "instructions": "Gera um checklist textual simples. Para o checklist completo do trabalho, use o painel local (botao Gerar checklist de protocolo)."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "Paizante - Relatorio Diario (local)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "days", "daysInterval": 1 }] }
+      },
+      "id": "trigger-agendado",
+      "name": "Agendamento Diario",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "command": "powershell -ExecutionPolicy Bypass -Command \"cd '%USERPROFILE%\\Documents\\AUTOMACOES_PAIZANTE_WEB_AI_SEM_API\\05_SCRIPTS_PYTHON'; .\\.venv\\Scripts\\python.exe -c \\\"from src import relatorio_documental; relatorio_documental.gerar_indice_todos_clientes()\\\"\""
+      },
+      "id": "gerar-relatorios",
+      "name": "Gerar indices de todos os clientes",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [480, 300]
+    }
+  ],
+  "connections": {
+    "Agendamento Diario": {
+      "main": [[{ "node": "Gerar indices de todos os clientes", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "meta": {
+    "instructions": "Roda diariamente a geracao de indices documentais de todos os clientes, salvando em 04_DOCUMENTOS/saida/relatorios."
+  }
+}

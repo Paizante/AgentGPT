@@ -1,0 +1,15 @@
+body { font-family: Segoe UI, Arial, sans-serif; margin: 0; background: #f4f4f4; color: #222; }
+.topo { background: #1c2b4a; color: white; padding: 12px 20px; }
+.topo a { color: white; text-decoration: none; }
+.topo nav a { margin-right: 16px; }
+.conteudo { padding: 20px; max-width: 1000px; margin: 0 auto; }
+.rodape { text-align: center; padding: 10px; color: #777; }
+.botao { background: #1c2b4a; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; margin: 4px 4px 4px 0; }
+.botao:hover { background: #324a78; }
+.tabela { width: 100%; border-collapse: collapse; background: white; }
+.tabela th, .tabela td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+.formulario { display: flex; flex-direction: column; gap: 8px; max-width: 600px; }
+.bloco-ia { background: white; padding: 14px; border-radius: 6px; margin-bottom: 10px; }
+.aviso { color: #a33; font-weight: bold; }
+textarea, input, select { width: 100%; box-sizing: border-box; padding: 6px; margin-bottom: 6px; }
+.checkboxes label { margin-right: 16px; }

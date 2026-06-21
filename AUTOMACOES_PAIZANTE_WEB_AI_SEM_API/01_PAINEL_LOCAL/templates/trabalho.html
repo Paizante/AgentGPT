@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Trabalho {{ job_id }}{% endblock %}
+{% block conteudo %}
+<h2>Trabalho: {{ job_id }}</h2>
+<p>
+    <strong>Tipo:</strong> {{ trabalho.tipo_tarefa }} |
+    <strong>Cliente:</strong> {{ trabalho.cliente }} |
+    <strong>Criado em:</strong> {{ trabalho.criado_em }}
+</p>
+<p><em>{{ trabalho.resumo }}</em></p>
+
+<form method="post" action="/trabalho/{{ job_id }}/abrir_pasta" style="display:inline">
+    <button class="botao" type="submit">Abrir pasta do trabalho</button>
+</form>
+<form method="post" action="/trabalho/{{ job_id }}/backup" style="display:inline">
+    <button class="botao" type="submit">Gerar backup</button>
+</form>
+
+<hr>
+{% for ia in ias %}
+<section class="bloco-ia">
+    <h3>{{ ia | capitalize }}</h3>
+    <form method="post" action="/trabalho/{{ job_id }}/gerar_prompt/{{ ia }}" style="display:inline">
+        <button class="botao" type="submit">Gerar prompt</button>
+    </form>
+    <button class="botao" type="button" onclick="copiarTexto('prompt_{{ ia }}')">Copiar prompt</button>
+    <form method="post" action="/trabalho/{{ job_id }}/copiar/{{ ia }}" style="display:inline">
+        <button class="botao" type="submit">Registrar copia</button>
+    </form>
+    <form method="post" action="/trabalho/{{ job_id }}/abrir_ia/{{ ia }}" style="display:inline">
+        <button class="botao" type="submit">Abrir {{ ia | capitalize }} no Chrome</button>
+    </form>
+    <form method="post" action="/trabalho/{{ job_id }}/registrar_envio/{{ ia }}" style="display:inline">
+        <button class="botao" type="submit">Confirmar envio manual</button>
+    </form>
+
+    <textarea id="prompt_{{ ia }}" rows="8" readonly>{{ prompts[ia] }}</textarea>
+
+    <p class="aviso">Cole manualmente no {{ ia | capitalize }}, revise e envie voce mesmo. Nenhum botao acima envia nada automaticamente.</p>
+
+    <form method="post" action="/trabalho/{{ job_id }}/resposta/{{ ia }}">
+        <label>Cole aqui a resposta do {{ ia | capitalize }}</label>
+        <textarea name="resposta" rows="8">{{ respostas[ia] }}</textarea>
+        <button class="botao" type="submit">Salvar resposta</button>
+    </form>
+</section>
+<hr>
+{% endfor %}
+
+<section>
+    <h3>Comparacao e Consolidacao</h3>
+    <form method="post" action="/trabalho/{{ job_id }}/comparar" style="display:inline">
+        <button class="botao" type="submit">Comparar respostas</button>
+    </form>
+    <form method="post" action="/trabalho/{{ job_id }}/consolidar" style="display:inline">
+        <button class="botao" type="submit">Consolidar</button>
+    </form>
+    <form method="post" action="/trabalho/{{ job_id }}/final" style="display:inline">
+        <button class="botao" type="submit">Gerar versao final</button>
+    </form>
+    <form method="post" action="/trabalho/{{ job_id }}/checklist" style="display:inline">
+        <button class="botao" type="submit">Gerar checklist de protocolo</button>
+    </form>
+
+    <h4>Comparativo</h4>
+    <textarea rows="10" readonly>{{ comparativo }}</textarea>
+    <h4>Consolidado</h4>
+    <textarea rows="10" readonly>{{ consolidado }}</textarea>
+    <h4>Versao Final (revisao humana obrigatoria)</h4>
+    <textarea rows="10" readonly>{{ final }}</textarea>
+    <h4>Checklist de protocolo</h4>
+    <textarea rows="8" readonly>{{ checklist }}</textarea>
+</section>
+
+<section>
+    <h3>Log do trabalho</h3>
+    <textarea rows="8" readonly>{{ log }}</textarea>
+</section>
+{% endblock %}

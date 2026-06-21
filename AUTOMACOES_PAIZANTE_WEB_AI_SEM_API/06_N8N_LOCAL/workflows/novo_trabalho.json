@@ -1,0 +1,34 @@
+{
+  "name": "Paizante - Novo Trabalho (local)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-manual",
+      "name": "Disparo Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8000/novo",
+        "options": {}
+      },
+      "id": "abrir-form-novo-trabalho",
+      "name": "Nota - Abrir formulario do painel",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [480, 300]
+    }
+  ],
+  "connections": {
+    "Disparo Manual": {
+      "main": [[{ "node": "Nota - Abrir formulario do painel", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "meta": {
+    "instructions": "Disparo manual para lembrar de abrir http://localhost:8000/novo e criar um trabalho. Nao automatiza envio para IAs."
+  }
+}
